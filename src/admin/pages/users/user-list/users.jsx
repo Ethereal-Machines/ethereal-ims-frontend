@@ -1,3 +1,8 @@
+/*
+ * __author__ = 'Anand Singh <sanand926@gmail.com>'
+ * __copyright__ = 'Copyright (C) 2019 Ethereal Machines Pvt. Ltd. All rights reserved'
+ */
+
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { Drawer,Modal } from 'antd';
@@ -29,7 +34,8 @@ class Users extends Component {
 
     callback = (data) => {
         if (data.status === 200) {
-            this.props.getAllUsers(data.data)
+            this.props.getAllUsers(data.data);
+            this.props.dispatchUpdateFirstRunUsers(false);
         } else {
             console.log(data.response)
         }
@@ -37,7 +43,9 @@ class Users extends Component {
 
     componentDidMount() {
         const {token} = this.state;
-        getUsers(this.callback, token);
+        if(this.props.firstRunUsers){
+            getUsers(this.callback, token);
+        }
     }
 
     profileCallback = (data) => {
@@ -101,6 +109,7 @@ class Users extends Component {
 
 function mapStateToProps(state) {
     return {
+        firstRunUsers: state.Users.firstRun,
         users: state.Users.users,
         profile: state.Users.profile
     }
@@ -123,6 +132,12 @@ function mapDispatchToProps(dispatch) {
         dispatchApproval: (data) => {
             dispatch({
                 type: actionType.APPROVE_USER,
+                value: data
+            })
+        },
+        dispatchUpdateFirstRunUsers: (data) => {
+            dispatch({
+                type: actionType.UPDATE_FIRST_RUN_USERS,
                 value: data
             })
         }

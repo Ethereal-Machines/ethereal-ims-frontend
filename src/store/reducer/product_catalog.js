@@ -1,11 +1,21 @@
+/*
+ * __author__ = 'Anand Singh <sanand926@gmail.com>'
+ * __copyright__ = 'Copyright (C) 2019 Ethereal Machines Pvt. Ltd. All rights reserved'
+ */
+
 import * as actionType from '../actions/action-type'
 
-const reducer = (state= {products: []}, action) => {
+const reducer = (state= {products: [], firstRun: true}, action) => {
     switch(action.type) {
         case actionType.PRODUCTS:
             return {
                 ...state,
                 products: action.value
+            }
+        case actionType.UPDATE_FIRST_RUN_PRODUCTS:
+            return {
+                ...state,
+                firstRun: action.value
             }
         case actionType.ADD_PRODUCTS:
             return {
@@ -22,7 +32,7 @@ const reducer = (state= {products: []}, action) => {
                     var newDetail = action.value.details.filter(detail =>
                          {
                         return !product.details.some(proDetail => {
-                            return detail._id == proDetail._id;
+                            return detail._id === proDetail._id;
                         });
                     });
                     
@@ -41,7 +51,7 @@ const reducer = (state= {products: []}, action) => {
                     var newMachine = action.value.productList.filter(newMachine =>
                         {
                         return !product.productList.some(machine => {
-                            return newMachine._id == machine._id;
+                            return newMachine._id === machine._id;
                         });
                     });
                     
@@ -93,7 +103,7 @@ const reducer = (state= {products: []}, action) => {
             })
         default:
             return state
-    };
+    }
 };
 
 export default reducer

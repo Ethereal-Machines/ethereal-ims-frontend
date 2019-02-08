@@ -1,3 +1,8 @@
+/*
+ * __author__ = 'Anand Singh <sanand926@gmail.com>'
+ * __copyright__ = 'Copyright (C) 2019 Ethereal Machines Pvt. Ltd. All rights reserved'
+ */
+
 import React, {Component} from 'react';
 import {connect} from 'react-redux'
 import Modal from '../../../../components/layout/modal/modal';
@@ -14,14 +19,15 @@ class CreateUser extends Component {
 
     state = {
         visible: false,
-        showLoader: true,
+        showLoader: this.props.firstRunCompanies? true : false,
         gToken: GetToken()
     }
 
     callback = (data) => {
         if(data.status === 200){
             this.props.getCompany(data.data);
-            this.setState({showLoader: false})
+            this.setState({showLoader: false});
+            this.props.dispatchUpdateFirstRunCompanies(false);
         }else {
             console.log(data.response);
         }
@@ -30,7 +36,9 @@ class CreateUser extends Component {
     componentDidMount(){
         const {gToken} = this.state;
         if(gToken){
-            getCompanylist(this.callback, gToken);
+            if(this.props.firstRunCompanies){
+                getCompanylist(this.callback, gToken);
+            }
         } 
     }
 
@@ -77,6 +85,7 @@ class CreateUser extends Component {
 
 function mapStateToProps(state) {
     return{
+        firstRunCompanies: state.Company.firstRun,
         companies: state.Company.company
     }
 }
@@ -86,6 +95,12 @@ function mapDispatchToProps(dispatch) {
         getCompany: (data) => {
             dispatch({
                 type: actionType.COMPANY,
+                value: data
+            })
+        },
+        dispatchUpdateFirstRunCompanies: (data) => {
+            dispatch({
+                type: actionType.UPDATE_FIRST_RUN_COMPANY,
                 value: data
             })
         }

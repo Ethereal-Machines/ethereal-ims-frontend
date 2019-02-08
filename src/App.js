@@ -1,8 +1,10 @@
+/*
+ * __author__ = 'Anand Singh <sanand926@gmail.com>'
+ * __copyright__ = 'Copyright (C) 2019 Ethereal Machines Pvt. Ltd. All rights reserved'
+ */
+
 import React, { Component } from 'react';
 import './App.css';
-import Layouts from './components/layout'
-import Login from './components/login'
-import Distributor from './distributor/index'
 import Routes from './routes/routes'
 
 class App extends Component {

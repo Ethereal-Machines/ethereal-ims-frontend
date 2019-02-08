@@ -1,3 +1,8 @@
+/*
+ * __author__ = 'Anand Singh <sanand926@gmail.com>'
+ * __copyright__ = 'Copyright (C) 2019 Ethereal Machines Pvt. Ltd. All rights reserved'
+ */
+
 import React, { Component } from 'react';
 import {connect} from 'react-redux';
 import Card from '../../../components/ui/card/card';
@@ -19,14 +24,15 @@ class Dashboard extends Component {
 
     state = {
         gToken: GetToken(),
-        showPLoader: true,
-        showOLoader: true
+        showPLoader: this.props.firstRunProducts ? true : false,
+        showOLoader: this.props.firstRunOrders ? true : false
     }
 
     productCallback = (data) => {
         if(data.status === 200){
-            this.props.getProducts(data.data)
-            this.setState({showPLoader: false})
+            this.props.getProducts(data.data);
+            this.setState({showPLoader: false});
+            this.props.dispatchUpdateFirstRunProducts(false)
         }else {
             console.log(data.response);
             this.setState({showPLoader: false})
@@ -37,6 +43,7 @@ class Dashboard extends Component {
         if(data.status === 200) {
             this.props.dispatchOrders(data.data);
             this.setState({showOLoader: false});
+            this.props.dispatchUpdateFirstRunOrders(false);
         }else{
             this.setState({showOLoader: false})
         }
@@ -45,8 +52,12 @@ class Dashboard extends Component {
     componentDidMount() {
         const {gToken} = this.state
         if(gToken){
-            getAllProduct(this.productCallback, gToken);
-            getOrders(this.callback, this.state.gToken);
+            if(this.props.firstRunProducts){
+                getAllProduct(this.productCallback, gToken);
+            }
+            if(this.props.firstRunOrders){
+                getOrders(this.callback, this.state.gToken);
+            }
         }
     }
 
@@ -100,13 +111,13 @@ class Dashboard extends Component {
                                 >
                                     <TreeNode title={<b>Machines</b>} key="0-0">
                                         <TreeNode 
-                                            icon={<img className="ray-icon" />} 
+                                            icon={<img className="ray-icon" alt=""/>} 
                                             title={<span style={{color:'#0c3ff7'}}>Total ({haloCount+rayCount+pentagramCount+haloSold+raySold+pentagramSold})</span>} 
                                             key="0-0-0-0" 
                                         />
-                                        <TreeNode icon={<img className="ray-icon" />} title={`Ray (${rayCount+raySold})`} key="0-0-0-1" />
-                                        <TreeNode icon={<img className="halo-icon" />} title={`Halo (${haloCount+haloSold})`} key="0-0-0-2" />
-                                        <TreeNode icon={<img className="pentagram-icon" />} title={`Pentagram (${pentagramCount+pentagramSold})`} key="0-0-0-3" />
+                                        <TreeNode icon={<img className="ray-icon" alt=""/>} title={`Ray (${rayCount+raySold})`} key="0-0-0-1" />
+                                        <TreeNode icon={<img className="halo-icon" alt=""/>} title={`Halo (${haloCount+haloSold})`} key="0-0-0-2" />
+                                        <TreeNode icon={<img className="pentagram-icon" alt=""/>} title={`Pentagram (${pentagramCount+pentagramSold})`} key="0-0-0-3" />
                                     </TreeNode>
                                 </Tree>
                             </div>
@@ -123,10 +134,10 @@ class Dashboard extends Component {
                                     onSelect={this.onSelect}
                                 >
                                     <TreeNode title={<b>Available Machines</b>} key="0-0">
-                                        <TreeNode icon={<img className="ray-icon" />} title={<span style={{color:'#0c3ff7'}}>Total ({haloCount+rayCount+pentagramCount})</span>} key="0-0-0-0" />
-                                        <TreeNode icon={<img className="ray-icon" />} title={`Ray (${rayCount})`} key="0-0-0-1" />
-                                        <TreeNode icon={<img className="halo-icon" />} title={`Halo (${haloCount})`} key="0-0-0-2" />
-                                        <TreeNode icon={<img className="pentagram-icon" />} title={`Pentagram (${pentagramCount})`} key="0-0-0-3" />
+                                        <TreeNode icon={<img className="ray-icon" alt=""/>} title={<span style={{color:'#0c3ff7'}}>Total ({haloCount+rayCount+pentagramCount})</span>} key="0-0-0-0" />
+                                        <TreeNode icon={<img className="ray-icon" alt=""/>} title={`Ray (${rayCount})`} key="0-0-0-1" />
+                                        <TreeNode icon={<img className="halo-icon" alt=""/>} title={`Halo (${haloCount})`} key="0-0-0-2" />
+                                        <TreeNode icon={<img className="pentagram-icon" alt=""/>} title={`Pentagram (${pentagramCount})`} key="0-0-0-3" />
                                     </TreeNode>
                                 </Tree>
                             </div>
@@ -148,10 +159,10 @@ class Dashboard extends Component {
                                     onSelect={this.onSelect}
                                 >
                                     <TreeNode title={<b>Toatal Sold</b>} key="0-0">
-                                    <TreeNode icon={<img className="ray-icon" />} title={<span style={{color:'#0c3ff7'}}>Total ({haloSold+raySold+pentagramSold})</span>} key="0-0-0-0" />
-                                        <TreeNode icon={<img className="ray-icon" />} title={`Ray (${raySold})`} key="0-0-0-1" />
-                                        <TreeNode icon={<img className="halo-icon" />} title={`Halo (${haloSold})`} key="0-0-0-2" />
-                                        <TreeNode icon={<img className="pentagram-icon" />} title={`Pentagram (${pentagramSold})`} key="0-0-0-3" />
+                                        <TreeNode icon={<img className="ray-icon" alt=""/>} title={<span style={{color:'#0c3ff7'}}>Total ({haloSold+raySold+pentagramSold})</span>} key="0-0-0-0" />
+                                        <TreeNode icon={<img className="ray-icon" alt=""/>} title={`Ray (${raySold})`} key="0-0-0-1" />
+                                        <TreeNode icon={<img className="halo-icon" alt=""/>} title={`Halo (${haloSold})`} key="0-0-0-2" />
+                                        <TreeNode icon={<img className="pentagram-icon" alt=""/>} title={`Pentagram (${pentagramSold})`} key="0-0-0-3" />
                                     </TreeNode>
                                 </Tree>
                             </div>
@@ -168,10 +179,10 @@ class Dashboard extends Component {
                                     onSelect={this.onSelect}
                                 >
                                     <TreeNode title={<b style={{color:'#0c3ff7'}}>Total Orders ({iCount+pkdCount+shpdCount+alctCount})</b>} key="0-0">
-                                        <TreeNode icon={<img className="ray-icon" />} title={`Installed (${iCount})`} key="0-0-0-0" />
-                                        <TreeNode icon={<img className="halo-icon" />} title={`Shipped (${shpdCount})`} key="0-0-0-1" />
-                                        <TreeNode icon={<img className="pentagram-icon" />} title={`Packed (${pkdCount})`} key="0-0-0-2" />
-                                        <TreeNode icon={<img className="pentagram-icon" />} title={`Allocated (${alctCount})`} key="0-0-0-3" />
+                                        <TreeNode icon={<Icon type="smile" />} title={`Installed (${iCount})`} key="0-0-0-0" />
+                                        <TreeNode icon={<Icon type="car" />} title={`Shipped (${shpdCount})`} key="0-0-0-1" />
+                                        <TreeNode icon={<Icon type="gift" />} title={`Packed (${pkdCount})`} key="0-0-0-2" />
+                                        <TreeNode icon={<Icon type="check-circle" />} title={`Allocated (${alctCount})`} key="0-0-0-3" />
                                     </TreeNode>
                                 </Tree>
                             </div>
@@ -185,6 +196,8 @@ class Dashboard extends Component {
 
 function mapStateToProps (state) {
     return{
+        firstRunOrders: state.Orders.firstRun,
+        firstRunProducts: state.Products.firstRun,
         orders: state.Orders.orders,
         products: state.Products.products,
     }
@@ -201,6 +214,18 @@ function mapDispatchToProps(dispatch) {
         dispatchOrders: (data) => {
             dispatch({
                 type: actionType.ORDERS,
+                value: data
+            })
+        },
+        dispatchUpdateFirstRunOrders: (data) => {
+            dispatch({
+                type: actionType.UPDATE_FIRST_RUN_ORDERS,
+                value: data
+            })
+        },
+        dispatchUpdateFirstRunProducts: (data) => {
+            dispatch({
+                type: actionType.UPDATE_FIRST_RUN_PRODUCTS,
                 value: data
             })
         }

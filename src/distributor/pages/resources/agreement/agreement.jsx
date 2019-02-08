@@ -1,10 +1,11 @@
+/*
+ * __author__ = 'Anand Singh <sanand926@gmail.com>'
+ * __copyright__ = 'Copyright (C) 2019 Ethereal Machines Pvt. Ltd. All rights reserved'
+ */
+
 import React, { Component } from 'react';
 import Heading from '../../../../components/form/heading/heading'
-import { Tabs, Icon } from 'antd';
 import './agreement.css'
-
-const TabPane = Tabs.TabPane;
-
 
 class Agreement extends Component {
     render(){

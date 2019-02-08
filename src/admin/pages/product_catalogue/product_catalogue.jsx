@@ -1,3 +1,8 @@
+/*
+ * __author__ = 'Anand Singh <sanand926@gmail.com>'
+ * __copyright__ = 'Copyright (C) 2019 Ethereal Machines Pvt. Ltd. All rights reserved'
+ */
+
 import React, { Component } from 'react'
 import {connect} from 'react-redux'
 import { Tabs, Icon } from 'antd';
@@ -18,20 +23,23 @@ class ProductCatalogue extends Component {
 
     state= {
         gToken: GetToken(),
-        showLoader: true
+        showLoader: this.props.firstRunProducts ? true : false
     }
 
     callback = (data) => {
         if(data.status === 200){
-            this.props.getProducts(data.data)
-            this.setState({showLoader: false})
+            this.props.getProducts(data.data);
+            this.setState({showLoader: false});
+            this.props.dispatchUpdateFirstRunProducts(false);
         }else {
             console.log(data.response)
         }
     }
 
     componentDidMount() {
-        getAllProduct(this.callback, this.state.gToken);
+        if(this.props.firstRunProducts){
+            getAllProduct(this.callback, this.state.gToken);
+        }
     }
 
     render(){
@@ -60,7 +68,8 @@ class ProductCatalogue extends Component {
 
 function mapStateToProps(state) {
     return{
-        products: state.Products.products
+        products: state.Products.products,
+        firstRunProducts: state.Products.firstRun
     }
 }
 
@@ -69,6 +78,12 @@ function mapDispatchToProps(dispatch) {
         getProducts: (data) => {
             dispatch({
                 type: actionType.PRODUCTS,
+                value: data
+            })
+        },
+        dispatchUpdateFirstRunProducts: (data) => {
+            dispatch({
+                type: actionType.UPDATE_FIRST_RUN_PRODUCTS,
                 value: data
             })
         }

@@ -1,11 +1,21 @@
+/*
+ * __author__ = 'Anand Singh <sanand926@gmail.com>'
+ * __copyright__ = 'Copyright (C) 2019 Ethereal Machines Pvt. Ltd. All rights reserved'
+ */
+
 import * as actionType from '../actions/action-type'
 
-const reducer = (state= {orders: []}, action) => {
+const reducer = (state= {orders: [], firstRun: true}, action) => {
     switch(action.type) {
         case actionType.ORDERS: 
             return {
                 ...state,
                 orders: action.value
+            }
+        case actionType.UPDATE_FIRST_RUN_ORDERS:
+            return {
+                ...state,
+                firstRun: action.value
             }
         case actionType.ADD_UNPROCEED_ORDER:
             return {

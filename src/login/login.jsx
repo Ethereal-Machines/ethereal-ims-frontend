@@ -1,28 +1,57 @@
+/*
+ * __author__ = 'Anand Singh <sanand926@gmail.com>'
+ * __copyright__ = 'Copyright (C) 2019 Ethereal Machines Pvt. Ltd. All rights reserved'
+ */
+
 import React, { Component } from 'react'
 import { Layout } from 'antd'
+import Modal from '../components/layout/modal/modal';
 import Header from '../components/header/header';
 import Heading from '../components/form/heading/heading'
 import InputType from '../components/form/form-controls/input'
 import Button from '../components/form/button/button'
 import Form from '../components/form/form'
-import login from '../services/apis/login'
-import {SetToken, GetToken} from '../helpers/token'
+import {login, tokenVerify} from '../services/apis/login'
+import ForgotPassword from './forgot_password/forgot_password'
+import {SetToken, GetToken} from '../helpers/token';
 import * as actionType from '../store/actions/action-type';
 import { connect } from 'react-redux'
 import ErrorBox from '../components/form/error-box/error-box'
 import {Redirect} from 'react-router-dom'
-import Loader from '../components/ui/loader/loader'
+import Loader from '../components/ui/loader/loader';
 const { Content, Footer } = Layout;
 
 class Login extends Component{
 
     state = {
+        visible: false,
         userName: '',
         password: '',
         url : this.props.redirectURL,
         errorMsg: '',
-        showLoader: false
+        showLoader: false,
+        loginLoader: true
     }
+
+    tokenVerifyCallback = (data) => {
+        if(data.status === 200){
+            this.setState({loginLoader: false});
+            this.props.basic(data.data);
+        }else{
+            this.setState({loginLoader: false});
+            console.log(data.response)
+        }
+    }
+
+    componentWillMount () {
+        if(GetToken){
+            tokenVerify(this.tokenVerifyCallback, GetToken());
+        }else{
+            this.setState({loginLoader: false})
+        }
+      }
+
+    
 
     callback = (data) => {
         if(data.status === 200) {
@@ -70,14 +99,42 @@ class Login extends Component{
         })
     }
 
+    openModal = () => {
+        this.setState({visible: true})
+    }
+    
+    // close modal
+    cancelClick = () => {
+        this.setState({visible: false})
+    }
+
     render(){
-        if(this.props.isLoggedIn && this.props.isApproved === 'approved' && GetToken()){
+        if(this.state.loginLoader){
+            return (
+                <Layout>
+                    <Header/>
+                    <Layout style={{marginTop: 64, height: '93vh'}} >
+                        <Content className="login">
+                        <Loader>Loading...</Loader>
+                        </Content>
+                    </Layout>
+                </Layout>
+            )
+        }else if(this.props.isLoggedIn && this.props.isApproved === 'approved' && GetToken()){
             return <Redirect to={this.state.url} />
         }else {
             return(
                 <Layout>
                     <Header/>
-                    <Layout style={{marginTop: 64, height: '100vh'}} >
+                    <Layout style={{marginTop: 64, height: '93vh'}} >
+                        <Modal 
+                            heading="Enter Your Registered Email."
+                            showModal={this.state.visible}
+                            cancelClick={this.cancelClick}
+                            footer={null}
+                        >
+                            <ForgotPassword cancelClick={this.cancelClick}/>
+                        </Modal>
                         <Content className="login">
                             <div className="login-box">
                                 <Heading heading={<b>Sign In</b>}/>
@@ -109,7 +166,7 @@ class Login extends Component{
                                             <Button isType='primary' htmlTypes='submit' isBlock={true}>LOGIN</Button>
                                         </div>
                                         <div className="login-group">
-                                            <Button isType='danger' isBlock={true}>FORGOTE PASSWORD</Button>
+                                            <Button isType='danger' isBlock={true} onClick={this.openModal}>FORGOT PASSWORD</Button>
                                         </div>
                                     </div>
                                 </Form>

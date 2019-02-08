@@ -1,3 +1,8 @@
+/*
+ * __author__ = 'Anand Singh <sanand926@gmail.com>'
+ * __copyright__ = 'Copyright (C) 2019 Ethereal Machines Pvt. Ltd. All rights reserved'
+ */
+
 import React, { Component } from 'react';
 import {connect} from 'react-redux';
 import { Modal } from 'antd';
@@ -5,7 +10,6 @@ import AddVendor from './add_vendor/add_vendor';
 import AddProduct from './add_product/add_product';
 import OrderDetail from './order_detail/order_detail';
 import Loader from '../../../../components/ui/loader/loader';
-import ErrorBox from '../../../../components/form/error-box/error-box';
 import FullScreenLoading from '../../../../components/ui/fullscreen_loader/fullscreen_loader'
 //
 import {GetToken} from '../../../../helpers/token';
@@ -16,7 +20,7 @@ import * as actionType from '../../../../store/actions/action-type'
 class AllocateOrder extends Component {
 
     state = {
-        showLoader: true,
+        showLoader: this.props.firstRunProducts ? true : false,
         gToken: GetToken(),
         orderDetailEditLoader: false,
         errMsg: ''
@@ -38,8 +42,9 @@ class AllocateOrder extends Component {
 
     productCallback = (data) => {
         if(data.status === 200){
-            this.props.getProducts(data.data)
-            this.setState({showLoader: false})
+            this.props.getProducts(data.data);
+            this.setState({showLoader: false});
+            this.props.dispatchUpdateFirstRunProducts(false);
         }else {
             this.error();
             console.log(data.response)
@@ -108,7 +113,9 @@ class AllocateOrder extends Component {
     componentDidMount(){
         const {gToken} = this.state;
         if(gToken){
-            getAllProduct(this.productCallback, gToken);
+            if(this.props.firstRunProducts){
+                getAllProduct(this.callback, gToken);
+            }
         }
     }
 
@@ -149,6 +156,7 @@ class AllocateOrder extends Component {
 function mapStateToProps(state) {
     return{
         products: state.Products.products,
+        firstRunProducts: state.Products.firstRun
     }
 }
 
@@ -181,6 +189,12 @@ function mapDispatchToProps(dispatch) {
         dispatchRemoveOrder: (data) => {
             dispatch({
                 type: actionType.REMOVE_UNPROCEED_ORDER,
+                value: data
+            })
+        },
+        dispatchUpdateFirstRunProducts: (data) => {
+            dispatch({
+                type: actionType.UPDATE_FIRST_RUN_PRODUCTS,
                 value: data
             })
         }
